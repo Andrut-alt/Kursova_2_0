@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Підбір викладача</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center; /* Центрування по горизонталі */
+            align-items: flex-start; /* Вирівнювання по верхньому краю */
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            display: flex;
+            width: 100%; /* Ширина контейнера */
+            max-width: 1200px; /* Максимальна ширина */
+        }
+        .filters {
+            flex: 1; /* Займає 1 частину простору */
+            margin-right: 20px; /* Відстань між фільтрами та списком */
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .teachers {
+            flex: 2; /* Займає 2 частини простору */
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        button {
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .email-button {
+            display: inline-block;
+            padding: 10px 15px;
+            margin-top: 5px;
+            background-color: #007bff; /* Green */
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .email-button:hover {
+            background-color: #0056b3; /* Darker green */
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 5px;
+            background: #f9f9f9;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<script>
+    function createEmailLink(email) {
+        const studentName = "{{ student.full_name }}";  // ПІБ студента
+        const studentCourse = "{{ student.course }}";    // Курс студента
+        const thesisTopic = "{{ student.thesis_topic }}"; // Тема курсової роботи
+        
+        const subject = encodeURIComponent(`Добрий день, Я, ${studentName}, студент ${studentCourse} курсу`);
+        const body = encodeURIComponent(`Чи можете Ви бути науковим керівником моєї курсової роботи, моя тема: ${thesisTopic}`);
+        const mailtoLink = `mailto:${email}?subject=${subject}&body=${body}`;
+        
+        window.location.href = mailtoLink;
+    }
+</script>
+</head>
+<body>
+<div class="container">
+    <div class="filters">
+        <h1>Фільтри</h1>
+        <form method="get">
+            {{ form.as_p }}
+            {% csrf_token %}
+            <button type="submit">Фільтрувати</button>
+            <a href="{% url 'profile' %}" class="profile-button">Перейти до профілю</a>
+        </form>
+    </div>
+
+    <div class="teachers">
+        <h2>Список викладачів</h2>
+        <ul>
+            {% for teacher in teachers %}
+                <li>
+                    <strong>{{ teacher.name }}</strong><br>
+                    {{ teacher.email }}<br>
+                    Кафедра {{ teacher.departament }}<br>
+                    Інтереси: 
+                    {% if teacher.interests.all %}
+                        {{ teacher.interests.all|join:", " }}
+                    {% else %}
+                        Немає інтересів
+                    {% endif %}
+                    <br>
+                    <button onclick="createEmailLink('{{ teacher.email }}')" class="email-button">Написати листа</button>
+                    <a href="{% url 'teacher_detail' teacher.id %}">Переглянути профіль</a>
+                </li>
+            {% empty %}
+                <li>Викладачів не знайдено.</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+</body>
+</html>

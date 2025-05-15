@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Реєстрація</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center; /* Центрування заголовка */
+        }
+
+        form {
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin: auto; /* Центрування форми */
+        }
+
+        form div {
+            margin-bottom: 15px;
+        }
+
+        form label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        form input {
+            padding: 10px;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box; /* Додає padding до загальної ширини */
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        p {
+            text-align: center;
+        }
+
+        .errorlist {
+            color: red;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Реєстрація</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.non_field_errors }}  
+        
+        <div> 
+            <label for="{{ form.username.id_for_label }}">Логін:</label>
+            {{ form.username }}  
+            {{ form.username.errors }}  
+        </div>
+        
+        <div>
+            <label for="{{ form.email.id_for_label }}">Електронна пошта:</label>
+            {{ form.email }}  
+            {{ form.email.errors }}  
+        </div>
+        
+        <div>
+            <label for="{{ form.password.id_for_label }}">Пароль:</label>
+            {{ form.password }}  
+            {{ form.password.errors }} 
+        </div>
+        
+        <div>
+            <label for="{{ form.full_name.id_for_label }}">ПІБ:</label>
+            {{ form.full_name }}  
+            {{ form.full_name.errors }}  
+        </div>
+        
+        <div>
+            <label for="{{ form.course.id_for_label }}">Курс:</label>
+            {{ form.course }}  
+            {{ form.course.errors }} 
+        </div>
+        
+        <div>
+            <label for="{{ form.thesis_topic.id_for_label }}">Тема курсової:</label>
+            {{ form.thesis_topic }}  
+            {{ form.thesis_topic.errors }}  
+        </div>
+        
+        <button type="submit">Зареєструватися</button>
+    </form>
+    <p>
+        Вже маєте акаунт? <a href="{% url 'login' %}">Увійти</a>
+    </p>
+</body>
+</html>
