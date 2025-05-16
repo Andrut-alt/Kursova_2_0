@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Профіль викладача</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
+        .container { max-width: 700px; margin: 40px auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 30px; }
+        h1 { color: #007bff; }
+        .slot { margin: 10px 0; padding: 10px; border-radius: 5px; background: #f9f9f9; }
+        .btn { padding: 8px 15px; background: #007bff; color: #fff; border: none; border-radius: 5px; cursor: pointer; text-decoration: none; }
+        .btn[disabled], .btn.disabled { background: #aaa; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Профіль викладача: {{ teacher.name }}</h1>
+    <p><strong>Email:</strong> {{ teacher.email }}</p>
+    <p><strong>Кафедра:</strong> {{ teacher.departament }}</p>
+    <p><strong>Інтереси:</strong> 
+        {% if teacher.interests.all %}
+            {{ teacher.interests.all|join:", " }}
+        {% else %}
+            Немає інтересів
+        {% endif %}
+    </p>
+    <h2>Слоти для запису</h2>
+    {% if slots %}
+        <ul>
+        {% for slot in slots %}
+            <li class="slot">
+                <strong>Слот {{ forloop.counter }}:</strong> {{ slot.students.count }}/{{ slot.capacity }}<br>
+                {% if student and student.assigned_slot %}
+                    {% if student.assigned_slot.id == slot.id %}
+                        <span style="color:green;">Ви зайняли цей слот</span>
+                    {% else %}
+                        <button class="btn disabled" disabled>Слот недоступний</button>
+                    {% endif %}
+                {% elif slot.is_full %}
+                    <button class="btn disabled" disabled>Слот зайнятий</button>
+                {% else %}
+                    <a href="{% url 'take_slot' teacher.id slot.id %}" class="btn">Зайняти слот</a>
+                {% endif %}
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>Слотів не знайдено.</p>
+    {% endif %}
+    <a href="{% url 'teacher_filter' %}" class="btn">Повернутися до списку викладачів</a>
+</div>
+</body>
+</html>

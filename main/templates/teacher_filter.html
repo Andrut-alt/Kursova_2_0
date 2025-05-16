@@ -122,7 +122,7 @@
                     {% endif %}
                     <br>
                     <button onclick="createEmailLink('{{ teacher.email }}')" class="email-button">Написати листа</button>
-                    <a href="{% url 'teacher_detail' teacher.id %}">Переглянути профіль</a>
+                    <a href="{% url 'teacher_detail' teacher.id %}" class="email-button">Переглянути профіль</a>
                 </li>
             {% empty %}
                 <li>Викладачів не знайдено.</li>

@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import AuthenticationForm
 from .forms import StudentRegistrationForm,  TeacherFilterForm
-from .models import Student, Teacher, Departament
+from .models import Student, Teacher, Departament, Slot
 from django.db.models import Count, Q
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
@@ -79,6 +79,32 @@ def teacher_filter_view(request):
         'teachers': teachers,
         'student': student,
     })
+
+def teacher_detail_view(request, teacher_id):
+    teacher = get_object_or_404(Teacher, id=teacher_id)
+    slots = Slot.objects.filter(teacher=teacher)
+    student = None
+    if request.user.is_authenticated:
+        try:
+            student = Student.objects.get(user=request.user)
+        except Student.DoesNotExist:
+            student = None
+    return render(request, 'teacher_detail.html', {
+        'teacher': teacher,
+        'slots': slots,
+        'student': student,
+    })
+
+@login_required
+def take_slot_view(request, teacher_id, slot_id):
+    student = get_object_or_404(Student, user=request.user)
+    slot = get_object_or_404(Slot, id=slot_id, teacher_id=teacher_id)
+    if student.assigned_slot is None and not slot.is_full():
+        slot.students.add(student)
+        student.assigned_slot = slot
+        student.save()
+        slot.save()
+    return redirect('teacher_detail', teacher_id=teacher_id)
 
 def home_view(request):
     return render(request, 'home.html')
